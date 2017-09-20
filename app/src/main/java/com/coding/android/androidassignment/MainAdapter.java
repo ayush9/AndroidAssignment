@@ -1,11 +1,14 @@
 package com.coding.android.androidassignment;
 
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -64,7 +67,7 @@ public class MainAdapter extends BaseAdapter {
         return position;
     }
 
-    public class Holder
+    private class Holder
     {
         TextView tv,tv1,tv2;
         ImageView img;
@@ -80,22 +83,58 @@ public class MainAdapter extends BaseAdapter {
         holder.tv=(TextView) rowView.findViewById(R.id.textView1);
         holder.tv1=(TextView) rowView.findViewById(R.id.textView2);
         holder.img=(ImageView) rowView.findViewById(R.id.imageView1);
-//        holder.like = (Button)rowView.findViewById(R.id.like);
-//        holder.dislike = (Button)rowView.findViewById(R.id.dislike);
+        holder.like = (Button) rowView.findViewById(R.id.like);
+//        holder.like.setBackgroundColor(Color.RED);
 //        holder.like.setOnClickListener(new OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                holder.dislike.setVisibility(View.VISIBLE);
-//                holder.like.setVisibility(View.GONE);
+//                if(!MainActivity.getLikeButtonStatus(context))
+//                {
+//                    holder.like.setBackgroundColor(Color.GREEN);
+//                    MainActivity.setLikeButtonStatus(context, true);
+//                    holder.like.setText("DISLIKE");
+//                }
+//                else {
+//                    holder.like.setBackgroundColor(Color.RED);
+//                    MainActivity.setLikeButtonStatus(context, false);
+//                    holder.like.setText("LIKE");
+//                }
 //            }
 //        });
-//        holder.dislike.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                holder.dislike.setVisibility(View.GONE);
-//                holder.like.setVisibility(View.VISIBLE);
-//            }
-//        });
+
+        holder.like.setBackgroundColor(Color.RED);
+        holder.like.setOnClickListener(new View.OnClickListener() {
+            ValueAnimator buttonColorAnim = null; // to hold the button animator
+
+            @Override
+            public void onClick(View v) {
+                // first time this will be null
+                if(buttonColorAnim != null){
+                    // reverse the color
+                    buttonColorAnim.reverse();
+                    // reset for next time click
+                    buttonColorAnim = null;
+                    // add your code here to remove from database
+                }
+                else {
+                    final Button button = (Button) v;
+                    // create a color value animator
+                    buttonColorAnim = ValueAnimator.ofObject(new ArgbEvaluator(), Color.RED, Color.BLUE);
+                    // add a update listener for the animator.
+                    buttonColorAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animator) {
+                            // set the background color
+                            button.setBackgroundColor((Integer) animator.getAnimatedValue());
+                        }
+                    });
+                    buttonColorAnim.start();
+                    // add your code here to add to database
+                    MainActivity.setLikeButtonStatus(context, true);
+                }
+            }
+        });
+
         holder.tv.setText(result.get(position).get("title"));
 
         if((result.get(position).get("text")) != null)

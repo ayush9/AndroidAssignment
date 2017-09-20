@@ -2,6 +2,7 @@ package com.coding.android.androidassignment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,6 +39,18 @@ public class MainActivity extends AppCompatActivity {
         ctx = this;
         setContentView(R.layout.activity_main);
         new GetContacts().execute();
+    }
+
+    public static void setLikeButtonStatus(Context con, boolean isShown) {
+        SharedPreferences sh = con.getSharedPreferences("is_shown", 0);
+        SharedPreferences.Editor ed = sh.edit();
+        ed.putBoolean("is_shown", isShown);
+        ed.apply();
+    }
+
+    public static boolean getLikeButtonStatus(Context con) {
+        SharedPreferences sh = con.getSharedPreferences("is_shown", 0);
+        return sh.getBoolean("is_shown", false);
     }
 
     private class GetContacts extends AsyncTask<Void, Void, Void> {
